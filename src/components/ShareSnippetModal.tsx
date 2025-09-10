@@ -220,7 +220,7 @@ const ShareSnippetModal: React.FC<ShareSnippetModalProps> = ({
                                     value={formData.inviteeEmail}
                                     onChange={handleInputChange}
                                     placeholder="Enter email address to invite"
-                                    // required
+                                // required
                                 />
                                 {checkingExisting && (
                                     <p className="text-xs text-gray-500 mt-1">Checking for existing invitations...</p>

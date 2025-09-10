@@ -196,8 +196,8 @@ const DashboardPage: React.FC = () => {
                         <button
                             onClick={() => setViewMode('all')}
                             className={`flex items-center space-x-2 py-2 px-4 text-sm font-medium rounded-md transition-colors ${viewMode === 'all'
-                                    ? 'bg-white text-gray-900 shadow-sm'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             <FiUsers className="w-4 h-4" />
@@ -206,8 +206,8 @@ const DashboardPage: React.FC = () => {
                         <button
                             onClick={() => setViewMode('owned')}
                             className={`flex items-center space-x-2 py-2 px-4 text-sm font-medium rounded-md transition-colors ${viewMode === 'owned'
-                                    ? 'bg-white text-gray-900 shadow-sm'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             <FiUser className="w-4 h-4" />
@@ -216,8 +216,8 @@ const DashboardPage: React.FC = () => {
                         <button
                             onClick={() => setViewMode('shared')}
                             className={`flex items-center space-x-2 py-2 px-4 text-sm font-medium rounded-md transition-colors ${viewMode === 'shared'
-                                    ? 'bg-white text-gray-900 shadow-sm'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             <FiUsers className="w-4 h-4" />
