@@ -493,7 +493,7 @@ export const sharingAPI = {
 };
 
 // Email notification function (mock implementation)
-const sendInvitationEmail = async (invitation: Invitation, snippetId: string): Promise<void> => {
+const sendInvitationEmail = async (_invitation: Invitation, _snippetId: string): Promise<void> => {
     try {
         // In a real application, you would integrate with an email service like:
         // - SendGrid
@@ -516,13 +516,13 @@ const sendInvitationEmail = async (invitation: Invitation, snippetId: string): P
 // Image upload functions
 export const imageAPI = {
     // Upload image to Appwrite storage
-    uploadImage: async (file: File, userId: string): Promise<string> => {
+    uploadImage: async (file: File, _userId: string): Promise<string> => {
         try {
 
             // Create a unique filename
             const fileId = ID.unique();
-            const fileExtension = file.name.split('.').pop() || 'jpg';
-            const fileName = `avatar-${userId}-${fileId}.${fileExtension}`;
+            // const fileExtension = file.name.split('.').pop() || 'jpg'; // Not currently used
+            // const fileName = `avatar-${userId}-${fileId}.${fileExtension}`; // Not currently used
 
 
             // Upload file to storage
