@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginForm } from '../components/login-form';
+import { authAPI } from '../lib/appwrite';
 import { toast } from 'sonner';
 
 const LoginPage: React.FC = () => {
@@ -30,11 +31,26 @@ const LoginPage: React.FC = () => {
         }
     };
 
+    const handleGitHubLogin = async () => {
+        try {
+            setError('');
+            await authAPI.loginWithGitHub();
+            // The user will be redirected to GitHub and then back to the app
+            // The AuthContext will handle the authentication when they return
+        } catch (error: Error | unknown) {
+            console.error('GitHub login error:', error);
+            setError(error instanceof Error ? error.message : 'GitHub login failed');
+            toast.error('GitHub login failed');
+            throw error;
+        }
+    };
+
     return (
         <div className="min-h-screen flex md:items-center items-start md:py-0 py-5 justify-center px-4 sm:px-6 lg:px-8">
             <div className="max-w-sm w-full space-y-8">
                 <LoginForm
                     onSubmit={handleLogin}
+                    onGitHubLogin={handleGitHubLogin}
                     loading={loading}
                     error={error}
                 />

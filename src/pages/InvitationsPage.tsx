@@ -21,17 +21,14 @@ const InvitationsPage: React.FC = () => {
 
         try {
             setLoading(true);
-            console.log('🔍 Loading invitations for email:', user.email);
 
             let userInvitations;
             if (debugMode) {
                 // Load all invitations for debugging
                 const allInvitations = await sharingAPI.getAllInvitations();
                 userInvitations = allInvitations;
-                console.log('🐛 Debug mode: Loading all invitations:', allInvitations);
             } else {
                 userInvitations = await sharingAPI.getUserInvitations(user.email);
-                console.log('📧 Found invitations:', userInvitations);
             }
 
             setInvitations(userInvitations);
@@ -131,7 +128,7 @@ const InvitationsPage: React.FC = () => {
 
     return (
         <>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen">
                 <div className="max-w-7xl mx-auto px-4 py-8">
                     {/* Header */}
                     <div className="mb-8">

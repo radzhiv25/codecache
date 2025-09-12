@@ -49,3 +49,4 @@ If you see "useAuth must be used within an AuthProvider" error:
 3. Restart the development server
 
 The application will show a loading state while checking authentication status.
+

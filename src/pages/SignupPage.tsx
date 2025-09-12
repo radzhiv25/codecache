@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { SignupForm } from '../components/signup-form';
+import { authAPI } from '../lib/appwrite';
+import { toast } from 'sonner';
 
 const SignupPage: React.FC = () => {
     const { register, loading, isAuthenticated } = useAuth();
@@ -20,10 +22,27 @@ const SignupPage: React.FC = () => {
             setError('');
             await register(name, email, password);
             navigate('/dashboard');
-        } catch (error: any) {
+            toast.success('Account created successfully');
+        } catch (error: unknown) {
             console.error('Registration error:', error);
-            setError(error.message || 'An error occurred during registration');
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred during registration';
+            setError(errorMessage);
+            toast.error('Registration failed');
             throw error; // Re-throw to let the form handle it
+        }
+    };
+
+    const handleGitHubLogin = async () => {
+        try {
+            setError('');
+            await authAPI.loginWithGitHub();
+            // The user will be redirected to GitHub and then back to the app
+            // The AuthContext will handle the authentication when they return
+        } catch (error: Error | unknown) {
+            console.error('GitHub login error:', error);
+            setError(error instanceof Error ? error.message : 'GitHub login failed');
+            toast.error('GitHub login failed');
+            throw error;
         }
     };
 
@@ -32,6 +51,7 @@ const SignupPage: React.FC = () => {
             <div className="max-w-sm w-full space-y-8">
                 <SignupForm
                     onSubmit={handleSignup}
+                    onGitHubLogin={handleGitHubLogin}
                     loading={loading}
                     error={error}
                 />

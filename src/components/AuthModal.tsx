@@ -75,9 +75,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, mode, onModeChan
             onClose();
             setFormData({ name: '', email: '', password: '', confirmPassword: '' });
             setErrors({});
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Auth error:', error);
-            setErrors({ general: error.message || 'An error occurred' });
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+            setErrors({ general: errorMessage });
         }
     };
 

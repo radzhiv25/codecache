@@ -7,7 +7,7 @@ import SnippetViewDrawer from '../components/SnippetViewDrawer';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { type Snippet, type CreateSnippetData } from '../types';
+import { type Snippet, type SnippetWithUser, type CreateSnippetData } from '../types';
 
 const LANGUAGES = [
     'All Languages', 'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C', 'C#',
@@ -17,7 +17,7 @@ const LANGUAGES = [
 
 const HomePage: React.FC = () => {
     const { user, isAuthenticated } = useAuth();
-    const [snippets, setSnippets] = useState<Snippet[]>([]);
+    const [snippets, setSnippets] = useState<(Snippet | SnippetWithUser)[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState<string>('All Languages');
@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
     const loadSnippets = useCallback(async () => {
         try {
             setLoading(true);
-            const publicSnippets = await snippetsAPI.getPublicSnippets();
+            const publicSnippets = await snippetsAPI.getPublicSnippetsWithUsers();
             setSnippets(publicSnippets);
         } catch (error) {
             console.error('Error loading snippets:', error);
@@ -112,7 +112,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="min-h-screen">
-            <div className="w-3/4 mx-auto py-8">
+            <div className="max-w-7xl mx-auto py-8">
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">

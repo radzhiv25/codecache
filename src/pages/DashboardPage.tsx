@@ -8,14 +8,15 @@ import SnippetViewDrawer from '../components/SnippetViewDrawer';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { type Snippet, type CreateSnippetData } from '../types';
+import { type Snippet, type SnippetWithUser, type CreateSnippetData } from '../types';
 import { FiUser, FiUsers } from 'react-icons/fi';
 
 const DashboardPage: React.FC = () => {
     const { user } = useAuth();
-    const [ownedSnippets, setOwnedSnippets] = useState<Snippet[]>([]);
+    const [ownedSnippets, setOwnedSnippets] = useState<SnippetWithUser[]>([]);
     const [sharedSnippets, setSharedSnippets] = useState<Snippet[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searching, setSearching] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
@@ -30,7 +31,7 @@ const DashboardPage: React.FC = () => {
 
         try {
             setLoading(true);
-            const { owned, shared } = await sharedSnippetsAPI.getAllAccessibleSnippets(user.$id, user.email);
+            const { owned, shared } = await sharedSnippetsAPI.getAllAccessibleSnippetsWithUsers(user.$id, user.email);
             setOwnedSnippets(owned);
             setSharedSnippets(shared);
         } catch (error) {
@@ -53,9 +54,16 @@ const DashboardPage: React.FC = () => {
             return;
         }
 
-        // For now, we'll do client-side filtering since we already have all snippets
-        // In a real app, you might want to implement server-side search
-        loadSnippets();
+        try {
+            setSearching(true);
+            // For now, we'll do client-side filtering since we already have all snippets
+            // In a real app, you might want to implement server-side search
+            loadSnippets();
+        } catch (error) {
+            console.error('Error searching snippets:', error);
+        } finally {
+            setSearching(false);
+        }
     };
 
     const handleCreateSnippet = async (data: CreateSnippetData) => {
@@ -163,8 +171,8 @@ const DashboardPage: React.FC = () => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex-1"
                             />
-                            <Button type="submit" disabled={loading} className="h-10 px-6">
-                                {loading ? 'Searching...' : 'Search'}
+                            <Button type="submit" disabled={searching} className="h-10 px-6">
+                                {searching ? 'Searching...' : 'Search'}
                             </Button>
                         </div>
                     </form>

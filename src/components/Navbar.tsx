@@ -2,9 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/Button';
+import { Avatar } from './ui/avatar';
 import { sharingAPI, usersAPI } from '../lib/appwrite';
-import { FiBell, FiUser } from 'react-icons/fi';
+import { FiBell } from 'react-icons/fi';
 import { type User } from '../types';
+import { DatabaseZap } from 'lucide-react';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated, loading } = useAuth();
@@ -60,24 +62,37 @@ const Navbar = () => {
         }
     }, [isAuthenticated, user?.email, loadUserProfile]);
 
+    // Listen for profile updates
+    useEffect(() => {
+        const handleProfileUpdate = () => {
+            if (isAuthenticated && user?.email) {
+                loadUserProfile();
+            }
+        };
+
+        window.addEventListener('profileUpdated', handleProfileUpdate);
+        return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
+    }, [isAuthenticated, user?.email, loadUserProfile]);
+
     return (
         <>
             <div className="md:max-w-7xl md:mx-auto mx-4 md:p-4 p-2 border border-gray-200 bg-white rounded-md">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex justify-between items-center">
                         {/* Logo */}
-                        <Link to="/" className="flex-shrink-0">
+                        <Link to="/" className="flex-shrink-0 flex items-center gap-2">
+                            <DatabaseZap className="size-10 text-gray-500" />
                             <span className="leading-tight">
                                 <h1 className="bg-gradient-to-br from-gray-300 to-zinc-600 text-transparent bg-clip-text text-xl md:text-2xl font-bold leading-none">CodeCache</h1>
-                                <p className="text-xs text-gray-500 hidden sm:block">your every code snippet vault</p>
+                                <p className="text-xs text-gray-500 hidden sm:block">your everyday code snippet vault</p>
                             </span>
                         </Link>
 
                         {/* Desktop Navigation */}
                         <nav className="hidden md:flex gap-6 items-center">
                             <Link
-                                to="/"
-                                className={`text-sm font-medium transition-colors ${location.pathname === '/'
+                                to="/app"
+                                className={`text-sm font-medium transition-colors ${location.pathname === '/app'
                                     ? 'text-gray-900'
                                     : 'text-gray-600 hover:text-gray-900'
                                     }`}
@@ -132,17 +147,11 @@ const Navbar = () => {
                                         to="/profile"
                                         className="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
                                     >
-                                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                                            {userProfile?.avatar ? (
-                                                <img
-                                                    src={userProfile.avatar}
-                                                    alt={userProfile.name}
-                                                    className="w-8 h-8 rounded-full object-cover"
-                                                />
-                                            ) : (
-                                                <FiUser className="w-4 h-4 text-gray-500" />
-                                            )}
-                                        </div>
+                                        <Avatar
+                                            src={userProfile?.avatar}
+                                            fallback={userProfile?.name || user?.name || 'User'}
+                                            size="sm"
+                                        />
                                         <span>{userProfile?.name || user?.name || 'User'}</span>
                                     </Link>
                                     <Button
@@ -212,8 +221,8 @@ const Navbar = () => {
                                 {/* Mobile Navigation Links */}
                                 <nav className="space-y-2">
                                     <Link
-                                        to="/"
-                                        className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${location.pathname === '/'
+                                        to="/app"
+                                        className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors ${location.pathname === '/app'
                                             ? 'text-gray-900 bg-gray-100'
                                             : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                                             }`}
@@ -274,17 +283,11 @@ const Navbar = () => {
                                                 className="flex items-center space-x-3 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
                                                 onClick={() => setIsMobileMenuOpen(false)}
                                             >
-                                                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                                                    {userProfile?.avatar ? (
-                                                        <img
-                                                            src={userProfile.avatar}
-                                                            alt={userProfile.name}
-                                                            className="w-8 h-8 rounded-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <FiUser className="w-4 h-4 text-gray-500" />
-                                                    )}
-                                                </div>
+                                                <Avatar
+                                                    src={userProfile?.avatar}
+                                                    fallback={userProfile?.name || user?.name || 'User'}
+                                                    size="sm"
+                                                />
                                                 <span>{userProfile?.name || user?.name || 'User'}</span>
                                             </Link>
                                             <Button

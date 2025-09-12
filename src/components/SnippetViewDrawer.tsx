@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from './ui/drawer';
 import { Button } from './ui/Button';
-import { type Snippet } from '../types';
+import { Avatar } from './ui/avatar';
+import { type Snippet, type SnippetWithUser } from '../types';
 import { FiCopy, FiCheck } from 'react-icons/fi';
 
 interface SnippetViewDrawerProps {
     isOpen: boolean;
     onClose: () => void;
-    snippet: Snippet | null;
+    snippet: Snippet | SnippetWithUser | null;
 }
 
 const SnippetViewDrawer: React.FC<SnippetViewDrawerProps> = ({
@@ -135,6 +136,17 @@ const SnippetViewDrawer: React.FC<SnippetViewDrawerProps> = ({
                     <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-200">
                         <div className="flex items-center space-x-4">
                             <span>Created {formatDate(snippet.createdAt)}</span>
+                            {'owner' in snippet && (
+                                <div className="flex items-center space-x-2">
+                                    <span>by</span>
+                                    <Avatar
+                                        src={snippet.owner.avatar}
+                                        fallback={snippet.owner.name}
+                                        size="sm"
+                                    />
+                                    <span className="font-medium">{snippet.owner.name}</span>
+                                </div>
+                            )}
                             {snippet.lastModifiedBy && (
                                 <span>Modified {formatDate(snippet.updatedAt)}</span>
                             )}

@@ -21,6 +21,10 @@ export interface Snippet {
     lastModifiedBy?: string;
 }
 
+export interface SnippetWithUser extends Snippet {
+    owner: User;
+}
+
 export interface Invitation {
     $id: string;
     snippetId: string;

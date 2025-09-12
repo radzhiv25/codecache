@@ -11,9 +11,11 @@ import {
 } from "./ui/card"
 import { Input } from "./ui/Input"
 import { Label } from "./ui/label"
+import { FiEye, FiEyeOff, FiGithub } from 'react-icons/fi'
 
 interface SignupFormProps {
     onSubmit: (name: string, email: string, password: string) => Promise<void>;
+    onGitHubLogin?: () => Promise<void>;
     loading?: boolean;
     error?: string;
     className?: string;
@@ -22,6 +24,7 @@ interface SignupFormProps {
 export function SignupForm({
     className,
     onSubmit,
+    onGitHubLogin,
     loading = false,
     error,
     ...props
@@ -33,6 +36,8 @@ export function SignupForm({
         confirmPassword: '',
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -77,9 +82,22 @@ export function SignupForm({
 
         try {
             await onSubmit(formData.name, formData.email, formData.password);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Signup error:', error);
-            setErrors({ general: error.message || 'An error occurred during registration' });
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred during registration';
+            setErrors({ general: errorMessage });
+        }
+    };
+
+    const handleGitHubLogin = async () => {
+        if (onGitHubLogin) {
+            try {
+                await onGitHubLogin();
+            } catch (error: unknown) {
+                console.error('GitHub login error:', error);
+                const errorMessage = error instanceof Error ? error.message : 'GitHub login failed';
+                setErrors({ general: errorMessage });
+            }
         }
     };
 
@@ -137,28 +155,56 @@ export function SignupForm({
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                    >
+                                        {showPassword ? (
+                                            <FiEyeOff className="w-4 h-4" />
+                                        ) : (
+                                            <FiEye className="w-4 h-4" />
+                                        )}
+                                    </button>
+                                </div>
                                 {errors.password && (
                                     <p className="text-sm text-red-500">{errors.password}</p>
                                 )}
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                <Input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type="password"
-                                    value={formData.confirmPassword}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        value={formData.confirmPassword}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                    >
+                                        {showConfirmPassword ? (
+                                            <FiEyeOff className="w-4 h-4" />
+                                        ) : (
+                                            <FiEye className="w-4 h-4" />
+                                        )}
+                                    </button>
+                                </div>
                                 {errors.confirmPassword && (
                                     <p className="text-sm text-red-500">{errors.confirmPassword}</p>
                                 )}
@@ -167,8 +213,15 @@ export function SignupForm({
                                 <Button type="submit" className="w-full" disabled={loading}>
                                     {loading ? 'Creating account...' : 'Create Account'}
                                 </Button>
-                                <Button variant="outline" className="w-full" type="button">
-                                    Sign up with Google
+                                <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    type="button"
+                                    onClick={handleGitHubLogin}
+                                    disabled={loading}
+                                >
+                                    <FiGithub className="w-4 h-4 mr-2" />
+                                    Sign up with GitHub
                                 </Button>
                             </div>
                         </div>

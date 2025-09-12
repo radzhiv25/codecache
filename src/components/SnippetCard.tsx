@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { type Snippet } from '../types';
+import { type Snippet, type SnippetWithUser } from '../types';
 import { Button } from './ui/Button';
+import { Avatar } from './ui/avatar';
 import { FiCopy, FiCheck } from 'react-icons/fi';
 
 interface SnippetCardProps {
-    snippet: Snippet;
+    snippet: Snippet | SnippetWithUser;
     onView: (snippet: Snippet) => void;
     onEdit?: (snippet: Snippet) => void;
     onDelete?: (snippet: Snippet) => void;
@@ -127,7 +128,20 @@ const SnippetCard: React.FC<SnippetCardProps> = ({
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>Created {formatDate(snippet.createdAt)}</span>
+                    <div className="flex items-center space-x-2">
+                        <span>Created {formatDate(snippet.createdAt)}</span>
+                        {'owner' in snippet && (
+                            <div className="flex items-center space-x-1">
+                                <span>by</span>
+                                <Avatar
+                                    src={snippet.owner.avatar}
+                                    fallback={snippet.owner.name}
+                                    size="xs"
+                                />
+                                <span className="font-medium">{snippet.owner.name}</span>
+                            </div>
+                        )}
+                    </div>
                     {snippet.lastModifiedBy && (
                         <span>Modified {formatDate(snippet.updatedAt)}</span>
                     )}

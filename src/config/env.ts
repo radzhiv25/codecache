@@ -26,3 +26,4 @@ export const validateConfig = () => {
         console.warn('See APPWRITE_SETUP.md for configuration details.');
     }
 };
+

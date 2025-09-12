@@ -1,6 +1,6 @@
-import { Client, Account, Databases, Storage, ID, Query } from 'appwrite';
+import { Client, Account, Databases, Storage, ID, Query, OAuthProvider } from 'appwrite';
 import { config, validateConfig } from '../config/env';
-import type { User, Snippet, Invitation, CreateSnippetData, UpdateSnippetData, ShareSnippetData, CollaborationRequest, CreateCollaborationRequestData } from '../types';
+import type { User, Snippet, SnippetWithUser, Invitation, CreateSnippetData, UpdateSnippetData, ShareSnippetData, CollaborationRequest, CreateCollaborationRequestData } from '../types';
 
 // Validate configuration on import
 validateConfig();
@@ -21,6 +21,7 @@ const USERS_COLLECTION_ID = config.appwrite.usersCollectionId;
 const INVITATIONS_COLLECTION_ID = config.appwrite.invitationsCollectionId;
 const COLLABORATION_REQUESTS_COLLECTION_ID = 'collaboration_requests'; // You'll need to create this collection
 const AVATARS_BUCKET_ID = 'avatars'; // You'll need to create this bucket
+const STORAGE_BUCKET_ID = AVATARS_BUCKET_ID; // Alias for compatibility
 
 // Auth API
 export const authAPI = {
@@ -88,6 +89,72 @@ export const authAPI = {
             throw error;
         }
     },
+
+    // GitHub OAuth
+    loginWithGitHub: async (): Promise<void> => {
+        try {
+            await account.createOAuth2Session(OAuthProvider.Github, 'http://localhost:5174/app', 'http://localhost:5174/login');
+        } catch (error) {
+            console.error('GitHub OAuth error:', error);
+            throw error;
+        }
+    },
+};
+
+// Helper function to get user by ID
+const getUserById = async (userId: string): Promise<User> => {
+    try {
+        const response = await databases.listDocuments(
+            DATABASE_ID,
+            USERS_COLLECTION_ID,
+            [Query.equal('$id', userId)]
+        );
+
+        if (response.documents.length === 0) {
+            throw new Error('User not found');
+        }
+
+        return response.documents[0] as unknown as User;
+    } catch (error) {
+        console.error('Error getting user by ID:', error);
+        throw error;
+    }
+};
+
+// Helper function to enrich snippets with user data
+const enrichSnippetsWithUsers = async (snippets: Snippet[]): Promise<SnippetWithUser[]> => {
+    try {
+        const snippetsWithUsers = await Promise.all(
+            snippets.map(async (snippet) => {
+                try {
+                    const owner = await getUserById(snippet.ownerId);
+                    return {
+                        ...snippet,
+                        owner
+                    } as SnippetWithUser;
+                } catch (error) {
+                    console.warn(`Could not fetch owner for snippet ${snippet.$id}:`, error);
+                    // Return snippet with minimal user data if owner fetch fails
+                    return {
+                        ...snippet,
+                        owner: {
+                            $id: snippet.ownerId,
+                            name: 'Unknown User',
+                            email: '',
+                            avatar: '',
+                            createdAt: '',
+                            updatedAt: ''
+                        }
+                    } as SnippetWithUser;
+                }
+            })
+        );
+
+        return snippetsWithUsers;
+    } catch (error) {
+        console.error('Error enriching snippets with users:', error);
+        throw error;
+    }
 };
 
 // Snippets API
@@ -113,6 +180,17 @@ export const snippetsAPI = {
         }
     },
 
+    // Get public snippets with user data
+    getPublicSnippetsWithUsers: async (limit: number = 20, offset: number = 0): Promise<SnippetWithUser[]> => {
+        try {
+            const snippets = await snippetsAPI.getPublicSnippets(limit, offset);
+            return await enrichSnippetsWithUsers(snippets);
+        } catch (error) {
+            console.error('Error getting public snippets with users:', error);
+            throw error;
+        }
+    },
+
     // Get user's snippets
     getUserSnippets: async (userId: string, limit: number = 20, offset: number = 0): Promise<Snippet[]> => {
         try {
@@ -130,6 +208,17 @@ export const snippetsAPI = {
             return response.documents as unknown as Snippet[];
         } catch (error) {
             console.error('Error getting user snippets:', error);
+            throw error;
+        }
+    },
+
+    // Get user's snippets with user data
+    getUserSnippetsWithUsers: async (userId: string, limit: number = 20, offset: number = 0): Promise<SnippetWithUser[]> => {
+        try {
+            const snippets = await snippetsAPI.getUserSnippets(userId, limit, offset);
+            return await enrichSnippetsWithUsers(snippets);
+        } catch (error) {
+            console.error('Error getting user snippets with users:', error);
             throw error;
         }
     },
@@ -318,15 +407,12 @@ export const sharingAPI = {
     // Get user invitations
     getUserInvitations: async (userEmail: string): Promise<Invitation[]> => {
         try {
-            console.log('🔍 Searching for invitations with email:', userEmail);
             const response = await databases.listDocuments(
                 DATABASE_ID,
                 INVITATIONS_COLLECTION_ID,
                 [Query.equal('inviteeEmail', userEmail)]
             );
 
-            console.log('📧 Raw response:', response);
-            console.log('📧 Documents found:', response.documents);
             return response.documents as unknown as Invitation[];
         } catch (error) {
             console.error('Error getting user invitations:', error);
@@ -342,7 +428,6 @@ export const sharingAPI = {
                 INVITATIONS_COLLECTION_ID
             );
 
-            console.log('🔍 All invitations in database:', response.documents);
             return response.documents as unknown as Invitation[];
         } catch (error) {
             console.error('Error getting all invitations:', error);
@@ -417,16 +502,7 @@ const sendInvitationEmail = async (invitation: Invitation, snippetId: string): P
         // - Nodemailer with SMTP
 
         // For now, we'll just log the invitation details
-        console.log('📧 Email notification would be sent:', {
-            to: invitation.inviteeEmail,
-            subject: 'You\'ve been invited to collaborate on a code snippet',
-            invitationId: invitation.$id,
-            snippetId: snippetId,
-            permissions: invitation.permissions,
-            expiresAt: invitation.expiresAt,
-            // In a real app, you'd include a link like:
-            // acceptLink: `${window.location.origin}/invitations/accept?token=${invitation.token}`
-        });
+        // In a real app, you'd send an actual email notification here
 
         // Simulate email sending delay
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -437,6 +513,51 @@ const sendInvitationEmail = async (invitation: Invitation, snippetId: string): P
 };
 
 // Users API
+// Image upload functions
+export const imageAPI = {
+    // Upload image to Appwrite storage
+    uploadImage: async (file: File, userId: string): Promise<string> => {
+        try {
+
+            // Create a unique filename
+            const fileId = ID.unique();
+            const fileExtension = file.name.split('.').pop() || 'jpg';
+            const fileName = `avatar-${userId}-${fileId}.${fileExtension}`;
+
+
+            // Upload file to storage
+            const response = await storage.createFile(
+                STORAGE_BUCKET_ID,
+                fileId,
+                file
+            );
+
+
+            // Get the file URL
+            const fileUrl = `https://cloud.appwrite.io/v1/storage/buckets/${STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${import.meta.env.VITE_APPWRITE_PROJECT_ID}`;
+
+            return fileUrl;
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            console.error('Error details:', {
+                message: error instanceof Error ? error.message : 'Unknown error',
+                stack: error instanceof Error ? error.stack : undefined
+            });
+            throw error;
+        }
+    },
+
+    // Delete image from storage
+    deleteImage: async (fileId: string): Promise<void> => {
+        try {
+            await storage.deleteFile(STORAGE_BUCKET_ID, fileId);
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            throw error;
+        }
+    }
+};
+
 export const usersAPI = {
     // Search users by email or name
     searchUsers: async (query: string): Promise<User[]> => {
@@ -750,6 +871,27 @@ export const sharedSnippetsAPI = {
             };
         } catch (error) {
             console.error('Error getting all accessible snippets:', error);
+            throw error;
+        }
+    },
+
+    // Get all snippets user has access to with user data (own + shared)
+    getAllAccessibleSnippetsWithUsers: async (userId: string, userEmail: string): Promise<{
+        owned: SnippetWithUser[];
+        shared: Snippet[];
+    }> => {
+        try {
+            const [ownedSnippets, sharedSnippets] = await Promise.all([
+                snippetsAPI.getUserSnippetsWithUsers(userId),
+                sharedSnippetsAPI.getSharedSnippets(userEmail)
+            ]);
+
+            return {
+                owned: ownedSnippets,
+                shared: sharedSnippets
+            };
+        } catch (error) {
+            console.error('Error getting all accessible snippets with users:', error);
             throw error;
         }
     },

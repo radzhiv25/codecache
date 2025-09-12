@@ -11,9 +11,11 @@ import {
 } from "./ui/card"
 import { Input } from "./ui/Input"
 import { Label } from "./ui/label"
+import { FiEye, FiEyeOff, FiGithub } from 'react-icons/fi'
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
+  onGitHubLogin?: () => Promise<void>;
   loading?: boolean;
   error?: string;
   className?: string;
@@ -22,6 +24,7 @@ interface LoginFormProps {
 export function LoginForm({
   className,
   onSubmit,
+  onGitHubLogin,
   loading = false,
   error,
   ...props
@@ -31,6 +34,7 @@ export function LoginForm({
     password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,9 +69,22 @@ export function LoginForm({
 
     try {
       await onSubmit(formData.email, formData.password);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      setErrors({ general: error.message || 'Invalid email or password' });
+      const errorMessage = error instanceof Error ? error.message : 'Invalid email or password';
+      setErrors({ general: errorMessage });
+    }
+  };
+
+  const handleGitHubLogin = async () => {
+    if (onGitHubLogin) {
+      try {
+        await onGitHubLogin();
+      } catch (error: unknown) {
+        console.error('GitHub login error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'GitHub login failed';
+        setErrors({ general: errorMessage });
+      }
     }
   };
 
@@ -118,14 +135,28 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                  >
+                    {showPassword ? (
+                      <FiEyeOff className="w-4 h-4" />
+                    ) : (
+                      <FiEye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-sm text-red-500">{errors.password}</p>
                 )}
@@ -134,8 +165,15 @@ export function LoginForm({
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Signing in...' : 'Login'}
                 </Button>
-                <Button variant="outline" className="w-full" type="button">
-                  Login with Google
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  type="button"
+                  onClick={handleGitHubLogin}
+                  disabled={loading}
+                >
+                  <FiGithub className="w-4 h-4 mr-2" />
+                  Login with GitHub
                 </Button>
               </div>
             </div>

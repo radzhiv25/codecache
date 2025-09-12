@@ -1,13 +1,39 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWRhdGFiYXNlLXphcC1pY29uIGx1Y2lkZS1kYXRhYmFzZS16YXAiPjxlbGxpcHNlIGN4PSIxMiIgY3k9IjUiIHJ4PSI5IiByeT0iMyIvPjxwYXRoIGQ9Ik0zIDVWMTlBOSAzIDAgMCAwIDE1IDIxLjg0Ii8+PHBhdGggZD0iTTIxIDVWOCIvPjxwYXRoIGQ9Ik0yMSAxMkwxOCAxN0gyMkwxOSAyMiIvPjxwYXRoIGQ9Ik0zIDEyQTkgMyAwIDAgMCAxNC41OSAxNC44NyIvPjwvc3ZnPg==" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Snippetly - Your code snippet vault. Store, organize, and share your code snippets with the world. Collaborate with developers and build better together." />
+  <meta name="keywords"
+    content="code snippets, programming, developer tools, code sharing, collaboration, coding, snippets, code vault" />
+  <meta name="author" content="Snippetly" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Snippetly - Your Code Snippet Vault" />
+  <meta property="og:description"
+    content="Store, organize, and share your code snippets with the world. Collaborate with developers and build better together." />
+  <meta property="og:image"
+    content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWRhdGFiYXNlLXphcC1pY29uIGx1Y2lkZS1kYXRhYmFzZS16YXAiPjxlbGxpcHNlIGN4PSIxMiIgY3k9IjUiIHJ4PSI5IiByeT0iMyIvPjxwYXRoIGQ9Ik0zIDVWMTlBOSAzIDAgMCAwIDE1IDIxLjg0Ii8+PHBhdGggZD0iTTIxIDVWOCIvPjxwYXRoIGQ9Ik0yMSAxMkwxOCAxN0gyMkwxOSAyMiIvPjxwYXRoIGQ9Ik0zIDEyQTkgMyAwIDAgMCAxNC41OSAxNC44NyIvPjwvc3ZnPg==" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:title" content="Snippetly - Your Code Snippet Vault" />
+  <meta property="twitter:description"
+    content="Store, organize, and share your code snippets with the world. Collaborate with developers and build better together." />
+  <meta property="twitter:image"
+    content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWRhdGFiYXNlLXphcC1pY29uIGx1Y2lkZS1kYXRhYmFzZS16YXAiPjxlbGxpcHNlIGN4PSIxMiIgY3k9IjUiIHJ4PSI5IiByeT0iMyIvPjxwYXRoIGQ9Ik0zIDVWMTlBOSAzIDAgMCAwIDE1IDIxLjg0Ii8+PHBhdGggZD0iTTIxIDVWOCIvPjxwYXRoIGQ9Ik0yMSAxMkwxOCAxN0gyMkwxOSAyMiIvPjxwYXRoIGQ9Ik0zIDEyQTkgMyAwIDAgMCAxNC41OSAxNC44NyIvPjwvc3ZnPg==" />
+
+  <title>Snippetly - Your Code Snippet Vault</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

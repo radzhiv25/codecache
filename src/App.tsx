@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
+import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
@@ -12,10 +13,11 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen py-5">
+        <div className="min-h-screen py-4">
           <Navbar />
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/app" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/invitations" element={<InvitationsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
