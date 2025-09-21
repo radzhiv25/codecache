@@ -76,7 +76,7 @@ const Navbar = () => {
 
     return (
         <>
-            <div className="md:max-w-7xl md:mx-auto mx-4 md:p-4 p-2 border border-gray-200 bg-white rounded-md">
+            <div className="sticky top-5 z-50 md:max-w-7xl md:mx-auto mx-4 md:p-4 p-2 border border-gray-200 bg-white/50 backdrop-blur-md rounded-md">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex justify-between items-center">
                         {/* Logo */}
@@ -166,7 +166,7 @@ const Navbar = () => {
                                 <>
                                     <Link to="/login">
                                         <Button
-                                            variant="ghost"
+                                            variant="outline"
                                             size="sm"
                                         >
                                             Login
@@ -217,7 +217,7 @@ const Navbar = () => {
                     {/* Mobile Menu */}
                     {isMobileMenuOpen && (
                         <div className="md:hidden mt-4 pb-4 border-t border-gray-200">
-                            <div className="pt-4 space-y-4">
+                            <div className="pt-4 space-y-4 text-center">
                                 {/* Mobile Navigation Links */}
                                 <nav className="space-y-2">
                                     <Link
@@ -303,9 +303,9 @@ const Navbar = () => {
                                         <div className="space-y-2">
                                             <Link to="/login" className="block" onClick={() => setIsMobileMenuOpen(false)}>
                                                 <Button
-                                                    variant="ghost"
+                                                    variant="outline"
                                                     size="sm"
-                                                    className="w-full justify-start"
+                                                    className="w-full justify-center"
                                                 >
                                                     Login
                                                 </Button>
