@@ -85,19 +85,19 @@ const LandingPage: React.FC = () => {
         <div className="min-h-screen bg-white">
             {/* Hero Section */}
             <section className="relative overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 h-[90vh] flex items-center justify-center">
                     <div className="text-center">
                         <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-8">
                             <FiStar className="w-4 h-4 mr-2" />
                             The future of code sharing
                         </div>
 
-                        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 md:leading-tight leading-10">
                             Your code snippet
                             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> vault</span>
                         </h1>
 
-                        <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto md:leading-relaxed leading-tight">
                             Store, organize, and share your code snippets with the world.
                             Collaborate with developers, discover amazing code, and build better together.
                         </p>
@@ -105,7 +105,7 @@ const LandingPage: React.FC = () => {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link to="/signup">
                                 <Button size="lg" className="px-8 py-4 text-lg">
-                                    Get Started Free
+                                    Get Started
                                     <FiArrowRight className="ml-2 w-5 h-5" />
                                 </Button>
                             </Link>
@@ -117,7 +117,7 @@ const LandingPage: React.FC = () => {
                         </div>
 
                         <p className="text-sm text-gray-500 mt-6">
-                            No credit card required • Free forever
+                            No card required • Free forever
                         </p>
                     </div>
                 </div>
@@ -125,7 +125,7 @@ const LandingPage: React.FC = () => {
 
             {/* Bento Grid Features */}
             <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 md:px-0">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">
                             Everything you need to manage code
@@ -139,7 +139,7 @@ const LandingPage: React.FC = () => {
                         {/* Large Feature Card - Code Management */}
                         <Card className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
                             <CardHeader>
-                                <div className="flex items-center gap-3 mb-4">
+                                <div className="flex md:items-center items-start gap-3 mb-4">
                                     <div className="p-3 bg-blue-100 rounded-lg">
                                         <FiCode className="w-6 h-6 text-blue-600" />
                                     </div>
@@ -157,7 +157,7 @@ const LandingPage: React.FC = () => {
                                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                                         <span className="ml-2 text-sm text-gray-500">React Component</span>
                                     </div>
-                                    <pre className="text-sm text-gray-800 font-mono">
+                                    <pre className="text-sm text-gray-800 font-mono overflow-x-auto">
                                         {`const Button = ({ children, variant }) => {
   return (
     <button className={\`btn \${variant}\`}>
@@ -232,7 +232,7 @@ const LandingPage: React.FC = () => {
                         {/* Live Stats Card */}
                         <Card className="md:col-span-2 bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200">
                             <CardHeader>
-                                <div className="flex items-center gap-3 mb-4">
+                                <div className="flex md:items-center items-start gap-3 mb-4">
                                     <div className="p-3 bg-indigo-100 rounded-lg">
                                         <FiTrendingUp className="w-6 h-6 text-indigo-600" />
                                     </div>
@@ -248,7 +248,7 @@ const LandingPage: React.FC = () => {
                                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                                     </div>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                         <div className="text-center">
                                             <div className="text-3xl font-bold text-indigo-600">{stats.totalSnippets}</div>
                                             <div className="text-sm text-gray-600">Total Snippets</div>
@@ -318,7 +318,7 @@ const LandingPage: React.FC = () => {
 
             {/* How it Works Section */}
             <section className="py-20 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 md:px-0">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">
                             How it Works
@@ -561,8 +561,8 @@ const LandingPage: React.FC = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-gray-50 text-gray-900">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <footer className="text-gray-900">
+                <div className="max-w-7xl mx-auto px-4 md:px-0 py-12">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                         <div className="flex items-center gap-2 mb-4 md:mb-0">
                             <DatabaseZap className="size-10 text-gray-500" />
